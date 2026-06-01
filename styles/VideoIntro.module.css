@@ -1,0 +1,267 @@
+.heroSection {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(circle at top left, rgba(255, 130, 60, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(85, 135, 255, 0.08), transparent 22%),
+    #050507;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+}
+
+.videoBackground,
+.videoForeground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ambientVideo,
+.mainVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 110%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+.ambientVideo {
+  filter: blur(44px) brightness(0.35) saturate(1.15);
+  opacity: 0.7;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0.2), rgba(5, 5, 5, 0.88) 45%, rgba(5, 5, 5, 0.96));
+}
+
+.cinematicOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(6, 6, 9, 0.6) 0%, rgba(6, 6, 9, 0.2) 45%, rgba(6, 6, 9, 0.7) 100%),
+    radial-gradient(circle at center, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.glowLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 15%, rgba(255, 160, 90, 0.18), transparent 20%),
+    radial-gradient(circle at 80% 20%, rgba(100, 160, 255, 0.12), transparent 18%);
+}
+
+.content {
+  position: relative;
+  z-index: 20;
+  max-width: 1100px;
+  width: 100%;
+  display: grid;
+  gap: 1.35rem;
+  place-items: start center;
+  text-align: center;
+  padding: 5rem 1rem 2rem;
+}
+
+.tagline {
+  font-size: 0.95rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #ffa75f;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 760px;
+  color: #d2d2da;
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  line-height: 1.85;
+}
+
+.resumeCard {
+  width: min(100%, 780px);
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1.3rem;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(7, 8, 12, 0.88);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.42);
+}
+
+.resumeItem {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.resumeLabel {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #ffb26f;
+}
+
+.resumeValue {
+  margin: 0;
+  color: #e7e7ed;
+  line-height: 1.65;
+}
+
+.buttonRow {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  bottom: 5.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.glassButton {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  color: #ffffff;
+  padding: 0.95rem 1.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  backdrop-filter: blur(14px);
+  min-width: 110px;
+}
+
+.glassButton:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 32px rgba(255, 160, 80, 0.12);
+  border-color: rgba(255, 190, 150, 0.35);
+}
+
+.hint {
+  color: #f8f4ed;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(16, 16, 23, 0.72);
+  font-size: 0.95rem;
+  animation: badgePop 0.5s ease;
+}
+
+.scrollIndicator {
+  position: absolute;
+  z-index: 30;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 56px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.15);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.scrollIndicator:hover {
+  transform: translateX(-50%) translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.pulseLine {
+  width: 3px;
+  height: 18px;
+  background: linear-gradient(180deg, #ffe1b7, #ff6f4d);
+  border-radius: 999px;
+  animation: pulseMove 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseMove {
+  0%, 100% {
+    transform: translateY(-2px);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.loadingVeil {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: #040406;
+  animation: veilFade 0.8s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes veilFade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroSection {
+    padding-top: 3rem;
+  }
+
+  .content {
+    padding: 4rem 1rem 2rem;
+  }
+
+  .title {
+    font-size: clamp(2.8rem, 12vw, 4.8rem);
+  }
+
+  .resumeCard {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .buttonRow {
+    bottom: 5rem;
+    width: calc(100% - 2rem);
+  }
+
+  .scrollIndicator {
+    bottom: 1.5rem;
+  }
+}
