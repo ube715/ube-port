@@ -18,3 +18,4 @@ Then open `http://localhost:3000`.
 - `components/VideoIntro.jsx` contains the video hero, controls, and scroll interaction.
 - `components/CinematicLayer.jsx` creates the 3D particle overlay using Three.js.
 - The implementation is designed to be responsive, cinematic, and high quality.
+# portfolio
