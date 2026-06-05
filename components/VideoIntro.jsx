@@ -8,13 +8,40 @@ import styles from '../styles/VideoIntro.module.css';
 export default function VideoIntro() {
   const videoSrc = '/VIDEO-2026-05-31-16-58-31.mp4';
   const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [showHint, setShowHint] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const textRef = useRef(null);
   const videoRef = useRef(null);
   const bgVideoRef = useRef(null);
   const heroRef = useRef(null);
+
+  const playSafely = async (video) => {
+    if (!video) return false;
+    try {
+      await video.play();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const syncAmbientToPrimary = () => {
+    const primary = videoRef.current;
+    const ambient = bgVideoRef.current;
+    if (!primary || !ambient) return;
+    const drift = Math.abs((ambient.currentTime || 0) - (primary.currentTime || 0));
+    if (drift > 0.08 && primary.readyState > 0 && ambient.readyState > 0) {
+      try {
+        ambient.currentTime = primary.currentTime || 0;
+      } catch {
+        // Ignore sync errors until both streams are seekable.
+      }
+    }
+    if (ambient.playbackRate !== primary.playbackRate) {
+      ambient.playbackRate = primary.playbackRate;
+    }
+  };
 
   useEffect(() => {
     if (!textRef.current || !heroRef.current) return;
@@ -36,33 +63,107 @@ export default function VideoIntro() {
     };
   }, []);
 
-  const togglePlay = () => {
+  useEffect(() => {
+    const primary = videoRef.current;
+    if (!primary) return;
+    primary.muted = isMuted;
+    primary.defaultMuted = isMuted;
+    primary.volume = 1;
+  }, [isMuted]);
+
+  useEffect(() => {
+    const primary = videoRef.current;
+    const ambient = bgVideoRef.current;
+    if (!primary || !ambient) return undefined;
+
+    ambient.muted = true;
+    ambient.volume = 0;
+
+    const sync = () => {
+      syncAmbientToPrimary();
+      setIsPlaying(!primary.paused && !primary.ended);
+    };
+    const onPlay = async () => {
+      syncAmbientToPrimary();
+      await playSafely(ambient);
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      ambient.pause();
+      setIsPlaying(false);
+    };
+    const onLoaded = async () => {
+      syncAmbientToPrimary();
+      if (!primary.paused) {
+        await playSafely(ambient);
+      }
+      setIsPlaying(!primary.paused && !primary.ended);
+    };
+
+    primary.addEventListener('play', onPlay);
+    primary.addEventListener('playing', onPlay);
+    primary.addEventListener('pause', onPause);
+    primary.addEventListener('seeking', sync);
+    primary.addEventListener('seeked', sync);
+    primary.addEventListener('timeupdate', sync);
+    primary.addEventListener('ratechange', sync);
+    primary.addEventListener('loadedmetadata', onLoaded);
+    primary.addEventListener('loadeddata', onLoaded);
+    sync();
+
+    return () => {
+      primary.removeEventListener('play', onPlay);
+      primary.removeEventListener('playing', onPlay);
+      primary.removeEventListener('pause', onPause);
+      primary.removeEventListener('seeking', sync);
+      primary.removeEventListener('seeked', sync);
+      primary.removeEventListener('timeupdate', sync);
+      primary.removeEventListener('ratechange', sync);
+      primary.removeEventListener('loadedmetadata', onLoaded);
+      primary.removeEventListener('loadeddata', onLoaded);
+    };
+  }, []);
+
+  const togglePlay = async () => {
     const primary = videoRef.current;
     const ambient = bgVideoRef.current;
     if (!primary || !ambient) return;
-    if (isPlaying) {
+    if (!primary.paused) {
       primary.pause();
       ambient.pause();
+      setIsPlaying(false);
     } else {
-      void primary.play();
-      void ambient.play();
+      syncAmbientToPrimary();
+      const playedPrimary = await playSafely(primary);
+      if (playedPrimary) {
+        await playSafely(ambient);
+        setIsPlaying(true);
+      } else {
+        setIsPlaying(false);
+      }
     }
-    setIsPlaying(!isPlaying);
+    setShowHint(false);
   };
 
-  const toggleMute = () => {
+  const toggleMute = async () => {
     const primary = videoRef.current;
-    const ambient = bgVideoRef.current;
-    if (!primary || !ambient) return;
-    const nextMuted = !isMuted;
+    if (!primary) return;
+    const nextMuted = !primary.muted;
     primary.muted = nextMuted;
-    ambient.muted = nextMuted;
+    primary.defaultMuted = nextMuted;
+    primary.volume = 1;
+    if (!nextMuted && primary.paused) {
+      const played = await playSafely(primary);
+      if (played) {
+        setIsPlaying(true);
+      }
+    }
     setIsMuted(nextMuted);
     setShowHint(false);
   };
 
   const scrollToNext = () => {
-    const section = document.getElementById('next-section');
+    const section = document.getElementById('resume-section');
     section?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -94,6 +195,7 @@ export default function VideoIntro() {
           muted={isMuted}
           playsInline
           preload="metadata"
+          onLoadedData={() => setIsLoaded(true)}
         />
       </div>
 
@@ -105,30 +207,9 @@ export default function VideoIntro() {
       <div className={styles.content} ref={textRef}>
         <span className={styles.tagline} data-animate>Information Technology Undergraduate</span>
         <h1 className={styles.title} data-animate>UBENDIRAN<br />GOPALAKRISHNAN</h1>
-        <p className={styles.subtitle} data-animate>Building modern web experiences, scalable applications, and impactful digital products.</p>
-
-        <div className={styles.resumeCard} data-animate>
-          <div className={styles.resumeItem}>
-            <span className={styles.resumeLabel}>Education</span>
-            <p className={styles.resumeValue}>B.Tech Information Technology (2022–2026) · CGPA 8.33</p>
-          </div>
-          <div className={styles.resumeItem}>
-            <span className={styles.resumeLabel}>Skills</span>
-            <p className={styles.resumeValue}>React, Next.js, Three.js, GSAP, HTML/CSS, JavaScript, SQL, Node.js, GraphQL, UI/UX.</p>
-          </div>
-          <div className={styles.resumeItem}>
-            <span className={styles.resumeLabel}>Internship Experience</span>
-            <p className={styles.resumeValue}>Software Development Intern · Worked on responsive UI components, API integrations, and frontend performance optimization.</p>
-          </div>
-          <div className={styles.resumeItem}>
-            <span className={styles.resumeLabel}>Projects</span>
-            <p className={styles.resumeValue}>Cinematic AI portfolio, modern web applications, and scalable full-stack product prototypes.</p>
-          </div>
-          <div className={styles.resumeItem}>
-            <span className={styles.resumeLabel}>Interests</span>
-            <p className={styles.resumeValue}>Cinematic motion design, immersive interfaces, premium frontend engineering, and digital product storytelling.</p>
-          </div>
-        </div>
+        <p className={styles.subtitle} data-animate>
+          Full stack and software development enthusiast focused on modern web experiences, scalable applications, and impactful digital products.
+        </p>
       </div>
 
       <div className={styles.buttonRow} data-animate>
