@@ -6,7 +6,8 @@ import CinematicLayer from './CinematicLayer';
 import styles from '../styles/VideoIntro.module.css';
 
 export default function VideoIntro() {
-  const videoSrc = '/VIDEO-2026-05-31-16-58-28.mp4';
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const videoSrc = `${basePath}/VIDEO-2026-05-31-16-58-28.mp4`;
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showHint, setShowHint] = useState(true);

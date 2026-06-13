@@ -11,6 +11,12 @@ npm run dev
 
 Then open `http://localhost:3000`.
 
+## Deploy to GitHub Pages
+
+This repo is configured for GitHub Pages with a static Next.js export. Every push to `main` will run the Pages workflow in `.github/workflows/deploy.yml` and publish the exported site.
+
+If your repository slug changes, update the base path in `next.config.js` and `.github/workflows/deploy.yml`.
+
 ## Notes
 
 - The hero uses `public/VIDEO-2026-05-31-16-58-28.mp4` as the main video asset.
